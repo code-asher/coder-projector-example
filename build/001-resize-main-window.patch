@@ -1,0 +1,29 @@
+diff --git a/projector-client-web/src/main/kotlin/org/jetbrains/projector/client/web/window/WebWindowManager.kt b/projector-client-web/src/main/kotlin/org/jetbrains/projector/client/web/window/WebWindowManager.kt
+index 20903d53..6b37fce8 100644
+--- a/projector-client-web/src/main/kotlin/org/jetbrains/projector/client/web/window/WebWindowManager.kt
++++ b/projector-client-web/src/main/kotlin/org/jetbrains/projector/client/web/window/WebWindowManager.kt
+@@ -34,6 +34,9 @@ import org.jetbrains.projector.common.protocol.toServer.ClientWindowsActivationE
+ import org.jetbrains.projector.common.protocol.toServer.ClientWindowsDeactivationEvent
+ import org.w3c.dom.HTMLCanvasElement
+ import org.w3c.dom.events.FocusEvent
++import org.w3c.dom.events.Event
++import kotlinx.browser.window
++import org.jetbrains.projector.common.protocol.toClient.WindowType
+ 
+ class WebWindowManager(private val stateMachine: ClientStateMachine, override val imageCacher: ImageCacher) : WindowManager<WebWindow>, LafListener {
+ 
+@@ -70,7 +73,13 @@ class WebWindowManager(private val stateMachine: ClientStateMachine, override va
+   fun getTopWindow(x: Int, y: Int): WebWindow? = windows.values.filter { it.isShowing && it.contains(x, y) }.maxByOrNull { it.zIndex }
+ 
+   fun getOrCreate(windowData: WindowData): WebWindow {
+-    return windows.getOrPut(windowData.id) { WebWindow(windowData, stateMachine, imageCacher) }
++    return windows.getOrPut(windowData.id) {
++      val w = WebWindow(windowData, stateMachine, imageCacher)
++      if (windowData.windowType == WindowType.IDEA_WINDOW) {
++        window.dispatchEvent(Event("resize"))
++      }
++      w
++    }
+   }
+ 
+   fun cleanup(presentedWindowIds: Set<Int>) {
