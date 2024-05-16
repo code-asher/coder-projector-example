@@ -207,8 +207,13 @@ resource "coder_script" "projector" {
     unzip /tmp/projector-server-v1.8.1.zip -d /tmp
     rm /tmp/projector-server-v1.8.1.zip
 
-    # Run a modified IDE launch script that works with Projector.
+    # Modify the IDE launch script in memory to work with Projector then run it.
     # https://github.com/JetBrains/projector-server?tab=readme-ov-file#how-to-run-my-application-using-this
+    # In v1 we would look for all editors on the PATH and had sub-paths for each
+    # one we found (/app/goland, /app/datagrip, etc).  Something similar could
+    # be done here with `which` and `readlink` and a reverse proxy like NGINX or
+    # even just making a separate coder_app for every type of IDE but for this
+    # example we will just reference the one IDE directly.
     cd /usr/local/datagrip/bin
     sed -e 's/classpath "\(\$CLASS_\?PATH\)"/classpath "\1:\/tmp\/projector-server-1.8.1\/lib\/*"/' \
         -e '/com\.intellij\.idea\.Main/d' \

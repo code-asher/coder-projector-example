@@ -12,9 +12,7 @@ RUN apt-get update \
 	libxext6 libxrender1 libxtst6 libxi6 libfreetype6 \
 	&& rm -rf /var/lib/apt/lists/*
 
-# - In this example we install Datagrip, but it could be any other supported IDE.
-# - v1 would look for the editor on the PATH, but in this example we will
-#   reference the IDE's launch script directly.
+# In this example we install Datagrip, but it could be any other supported IDE.
 #
 # NOTE: Development of JetBrains projector was suspended on July 11,
 #       2022. JetBrains IDE versions published after this date may exhibit
